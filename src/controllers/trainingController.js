@@ -1,22 +1,14 @@
 "use strict";
 
-const { mongoose } = require("../configs/dbConnection");
+ 
 const CustomError = require("../errors/customError");
 const { Training } = require("../models/trainingModel");
 const {
   mustRequirementOr400,
   idTypeValidationOr400,
-  isExistOnTableOr404,
-  partialRequirementOr400,
+  isExistOnTableOr404, 
   lengthValidationOr400,
-} = require("../helpers/utils");
-const { User } = require("../models/userModel");
-const {
-  uploadFileToGoogleDrive,
-  deleteFile,
-} = require("../helpers/googleDriveUpload");
-const bufferToBase64 = require("../helpers/bufferToBase64");
-const cloudinary = require("../helpers/cloudinary");
+} = require("../helpers/utils"); 
 
 module.exports.training = {
   list: async function (req, res) {
