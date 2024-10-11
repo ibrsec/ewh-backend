@@ -1,0 +1,2052 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "english-with-hatice",
+    "description": "English With Hatice",
+    "termsOfService": "https://ibrahimseckin-portfolio.vercel.app/",
+    "license": {
+      "name": "ISC"
+    },
+    "contact": {
+      "name": "ibrsec",
+      "email": "ibr.seckin@gmail.com"
+    }
+  },
+  "host": "localhost:10000",
+  "basePath": "/",
+  "schemes": [
+    "https",
+    "http"
+  ],
+  "securityDefinitions": {
+    "Token": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "Authorization",
+      "description": " Simple token authentication *  example: <b>Token ...tokenkey...</b>"
+    },
+    "Bearer": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "Authorization",
+      "description": "Jwt token authentication *  example : <b>Bearer ...jwt tokenkey...</b>"
+    }
+  },
+  "consumes": [
+    "application/json",
+    "multipart/form-data"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/users/": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "List Users",
+        "description": "  List all users!</br></br>  <b>Permission= Loginned user</b></br>   - Normal users can't list other users</br>  - Admin users can list everyone</br></br>  Token endpoint is hidden </br></br>  You can send query with endpoint for filter[],search[], sort[], page and limit.  <ul> Examples:   <li>URL/?<b>filter[field1]=value1&filter[field2]=value2</b></li>   <li>URL/?<b>search[field1]=value1&search[field2]=value2</b></li>   <li>URL/?<b>sort[field1]=asc&sort[field2]=desc</b></li>   <li>URL/?<b>page=2&limit=1</b></li>  </ul>  ",
+        "parameters": [
+          {
+            "name": "filter",
+            "in": "query",
+            "description": "url?filter[fieldName]=value",
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "url?search[fieldName]=value",
+            "type": "string"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "url?sort[fieldName]=desc(or asc)",
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "url?page=1",
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "url?limit=20",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Listed!",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Users are listed!"
+                },
+                "data": {
+                  "$ref": "#/definitions/User"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Create new User",
+        "description": "  Create a new user!</br></br>  <b>Permission= No Permission</b></br>   - Admin users can be create.d just by admin users</br></br>  - username cant contain space chars</br>  - Password type Rules- [lenght:8-16, at least: 1 upper, 1 lower, 1 number, 1 special[@$!%*?&]]</br>  - username length max:40</br>  - fullName length max:40</br>  - email length max:100</br>   - Email type Rules- --@--.--</br>  - Required fields: - username, password, fullName, email</br>    ",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "example": "testuser"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "Password1*"
+                },
+                "fullName": {
+                  "type": "string",
+                  "example": "full name"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "email"
+                },
+                "isAdmin": {
+                  "type": "boolean",
+                  "example": false
+                }
+              },
+              "required": [
+                "username",
+                "password",
+                "fullName",
+                "email"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successfully  !",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Your account has been successfully created!"
+                },
+                "token": {
+                  "type": "string",
+                  "example": "tokenkey"
+                },
+                "bearer": {
+                  "type": "object",
+                  "properties": {
+                    "accessToken": {
+                      "type": "string",
+                      "example": "accestoken key"
+                    },
+                    "refreshToken": {
+                      "type": "string",
+                      "example": "refreshtoken key"
+                    }
+                  }
+                },
+                "data": {
+                  "$ref": "#/definitions/User"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request </br>  - username, password, fullName, email fields are required!</br>  - username field can't contain any space char!</br>  - Length errors</br>  "
+          }
+        }
+      }
+    },
+    "/api/users/{id}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get a user",
+        "description": "  Get a user by id!!</br></br>  <b>Permission= Loginned user</b></br>   - Admin can list all users!</br>   - Normal user can list just theirselves!</br></br>",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "example": "testuser"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "Password1*"
+                },
+                "fullName": {
+                  "type": "string",
+                  "example": "firstname"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "email"
+                },
+                "isAdmin": {
+                  "type": "boolean",
+                  "example": false
+                }
+              }
+            },
+            "description": "One field is enough!"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully found!",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "User is found!"
+                },
+                "data": {
+                  "$ref": "#/definitions/User"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "202": {
+            "description": "Successfully partially updated!",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "User is partially updated!!"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "modifiedCount": {
+                      "type": "number",
+                      "example": 1
+                    }
+                  }
+                },
+                "new": {
+                  "$ref": "#/definitions/User"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "204": {
+            "description": "Successfully deleted!"
+          },
+          "400": {
+            "description": "Bad request - Invalid userId(paramId) type(ObjectId)!"
+          },
+          "404": {
+            "description": "Not found - User not found fro delete!"
+          },
+          "500": {
+            "description": "Something went wrong! - asked record is found, but it couldn't be updated!"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update a User",
+        "description": "  Update a User by id!</br></br>  <b>Permission= Normal user</b></br>   - Admin users can be update.d just by admin users</br>   - Other users can update theirselves</br>  - isAdmin modification is accessible for just the admin users!</br> </br>  - Password type Rules- [lenght:8-16, at least: 1 upper, 1 lower, 1 number, 1 special[@$!%*?&]]</br>  - username field can't contain any space char!</br>  - username length max:40</br>  - fullName length max:40</br>  - email length max:100</br>   - Email type Rules- --@--.--</br>  - Required fields: - username, password, fullName, email</br>    ",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "example": "testuser"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "Password1*"
+                },
+                "fullName": {
+                  "type": "string",
+                  "example": "firstname"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "email"
+                },
+                "isAdmin": {
+                  "type": "boolean",
+                  "example": false
+                }
+              },
+              "required": [
+                "username",
+                "password",
+                "fullName",
+                "email"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Successfully  !",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "User is  !!"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "modifiedCount": {
+                      "type": "number",
+                      "example": 1
+                    }
+                  }
+                },
+                "new": {
+                  "$ref": "#/definitions/User"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request    </br>- Invalid userId(paramId) type(ObjectId)!   </br>- username, password, fullName, email fields are required!   </br>- Non-admin users can't modify other users!   </br>- username field can't contain any space char!   </br>- Length errors   "
+          },
+          "404": {
+            "description": "Not found - User not found for update!"
+          },
+          "500": {
+            "description": "Something went wrong! - asked record is found, but it couldn't be updated!"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Delete a user",
+        "description": "  Delete a user by id!!</br></br>  <b>Permission= Admin user</b></br>   - Admin can delete all users!</br>  - Other users can't delete any user!</br>",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successfully  !"
+          },
+          "400": {
+            "description": "Bad request - Invalid userId(paramId) type(ObjectId)!"
+          },
+          "404": {
+            "description": "Not found - User not found fro delete!"
+          },
+          "500": {
+            "description": "Something went wrong! - asked record is found, but it couldn't be updated!"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Partial Update",
+        "description": "  Partial Update a User by id!</br></br>  <b>Permission= Normal user</b></br>   - Admin users can be update.d just by admin users</br>  - Other users can update just theirselves</br>  - isAdmin modification is accessible for just the admin users!</br> </br>  - Password type Rules- [lenght:8-16, at least: 1 upper, 1 lower, 1 number, 1 special[@$!%*?&]]</br>  - username field can't contain any space char!</br>  - username length max:40</br>  - fullName length max:40</br>  - email length max:100</br>   - Email type Rules- --@--.--</br>  - Required fields: - At least one of the username, password, fullName, email, gender, isAdmin fields is required!</br>   ",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "One field is enough!",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "example": "testuser"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "Password1*"
+                },
+                "fullName": {
+                  "type": "string",
+                  "example": "firstname"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "email"
+                },
+                "isAdmin": {
+                  "type": "boolean",
+                  "example": false
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Successfully partially updated!",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "User is partially updated!!"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "modifiedCount": {
+                      "type": "number",
+                      "example": 1
+                    }
+                  }
+                },
+                "new": {
+                  "$ref": "#/definitions/User"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request    </br>- Invalid userId(paramId) type(ObjectId)!   </br>- At least one field of username, password, fullName, email, isAdmin fields is required!   </br>- Non-admin users can't modify other users!   </br>- username field can't contain any space char!   </br>- Length errors      "
+          },
+          "404": {
+            "description": "Not found - User not found for partial update!"
+          },
+          "500": {
+            "description": "Something went wrong! - asked record is found, but it couldn't be updated!"
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Login",
+        "description": "  Login with username and password!</br></br>  <b>Permission= No Permission</b></br></br>  - Password type Rules- [lenght:8-16, at least: 1 upper, 1 lower, 1 number, 1 special[@$!%*?&]]</br>  - Email type Rules- --@--.--</br>  - Required fields: - username, password</br>  ",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "example": "username"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "Password1*"
+                }
+              },
+              "required": [
+                "username",
+                "password"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Logined!",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Login is OK!"
+                },
+                "token": {
+                  "type": "string",
+                  "example": "tokenkey"
+                },
+                "bearer": {
+                  "type": "object",
+                  "properties": {
+                    "accessToken": {
+                      "type": "string",
+                      "example": "access token"
+                    },
+                    "refreshToken": {
+                      "type": "string",
+                      "example": "refresh token"
+                    }
+                  }
+                },
+                "user": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string",
+                      "example": "66362c828c9af95390f5aae5"
+                    },
+                    "username": {
+                      "type": "string",
+                      "example": "testba"
+                    },
+                    "password": {
+                      "type": "string",
+                      "example": "f1dffdee8d0642d170e697331929a7250aedca4ad508f4d1f9986dbdb888c5fc"
+                    },
+                    "fullName": {
+                      "type": "string",
+                      "example": "testba"
+                    },
+                    "isAdmin": {
+                      "type": "boolean",
+                      "example": false
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request :   </br>- username and password fields are required!   "
+          },
+          "401": {
+            "description": "Unauthorized:    </br>- User not found!    </br>- Invalid password!   "
+          }
+        }
+      }
+    },
+    "/api/auth/refresh": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Refresh token",
+        "description": "  Refresh the access token with refresh token!</br></br>   <b>Permission= No Permission</b></br></br>  - Required fields: - bearer. refresh Token</br>  ",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "bearer": {
+                  "type": "object",
+                  "properties": {
+                    "refresh Token": {
+                      "type": "string",
+                      "example": "...refresh token"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully  !",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Access token is  !!"
+                },
+                "result": {
+                  "type": "object",
+                  "properties": {
+                    "bearer": {
+                      "type": "object",
+                      "properties": {
+                        "accessToken": {
+                          "type": "string",
+                          "example": "access token"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - bearer.refreshToken is a required field!"
+          },
+          "401": {
+            "description": "Unauthorized:    </br>- Unauhtorized - Invalid signature - invalid token or token is expired!!    </br>- User not found!   </br>- Invalid password!   "
+          }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Logout",
+        "description": "  Logout with with token(simple token, not jwt) or with out token!</br>  - if api request is sended with a simple token(Authentication header), that token will be deleted!</br>  - if api request is not sended with a simple token(Authentication header), Logout will happen without deleting a token!</br>  - There is not a token deletion for JWT Token, Logout will happen!</br>  </br></br>  <b>Permission= No Permission</b></br></br>  ",
+        "responses": {
+          "200": {
+            "description": "Successfully Logged out!",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Logout is OK!"
+                },
+                "result": {
+                  "type": "object",
+                  "properties": {
+                    "deletedToken": {
+                      "type": "number",
+                      "example": 1
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/emails/": {
+      "get": {
+        "tags": [
+          "Emails"
+        ],
+        "summary": "List Emails",
+        "description": "  List all Emails!</br></br>  <b>Permission= Admin users</b></br>   You can send query with endpoint for filter[],search[], sort[], page and limit.  <ul> Examples:   <li>URL/?<b>filter[field1]=value1&filter[field2]=value2</b></li>   <li>URL/?<b>search[field1]=value1&search[field2]=value2</b></li>   <li>URL/?<b>sort[field1]=1&sort[field2]=-1</b></li>   <li>URL/?<b>page=2&limit=1</b></li>  </ul>  ",
+        "responses": {
+          "200": {
+            "description": "Successfully Listed!",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Emails are listed!"
+                },
+                "data": {
+                  "$ref": "#/definitions/Email"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Emails"
+        ],
+        "summary": "Create Email",
+        "description": "  Create a Email!</br></br>  <b>Permission= Admin user</b></br></br>  - Email field max length: 100</br>   - Email name must be unique</br>   ",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "example": "test email name"
+                }
+              },
+              "required": [
+                "email"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successfully  !",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "A new email is created!"
+                },
+                "data": {
+                  "$ref": "#/definitions/Email"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - email field is required!</br>    - Invalid email length, max: 100!</br>    - Invalid email type, Valid type: __@__.__</br>     "
+          }
+        }
+      }
+    },
+    "/api/emails/{id}": {
+      "get": {
+        "tags": [
+          "Emails"
+        ],
+        "summary": "Get a Email",
+        "description": "  Get a Email by email id(ObjectId)!</br></br>  <b>Permission= Admin user</b></br>   ",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Found!",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Email is found!"
+                },
+                "data": {
+                  "$ref": "#/definitions/Email"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid param Id type! (it Should be ObjectId)!"
+          },
+          "404": {
+            "description": "Not found - Email not found!"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Emails"
+        ],
+        "summary": "UPDATE Email",
+        "description": "  Update a Email with id(ObjectId)!</br></br>  <b>Permission= Admin user</b></br></br>  - Email field max length: 100</br>   - Email field must be unique</br>   ",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "example": "test email name"
+                }
+              },
+              "required": [
+                "email"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Successfully  !",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Email is  !"
+                },
+                "data": {
+                  "$ref": "#/definitions/Email"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request: </br>  - email field is required!</br>  - Invalid param Id type! (it Should be ObjectId)!</br>   - Invalid email type, Valid type: __@__.__!</br>     "
+          },
+          "404": {
+            "description": "Not found: </br>  - Email not found for update!</br>     "
+          },
+          "409": {
+            "description": "Conflict: </br>  - This email is already exist!</br>     "
+          },
+          "500": {
+            "description": "Something went wrong! - Email is found! But it couldn't be updated!"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Emails"
+        ],
+        "summary": "Delete a Email",
+        "description": "  Delete a Email by email id(ObjectId)!</br></br>  <b>Permission= Admin user</b></br>   ",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Deleted!",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Email is  !"
+                },
+                "data": {
+                  "$ref": "#/definitions/Email"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad request - Invalid param Id type! (it Should be ObjectId)!"
+          },
+          "404": {
+            "description": "Not found - Email not found for deletion!"
+          },
+          "500": {
+            "description": "Something went wrong! - Email is found! But it couldn't be deleted!"
+          }
+        }
+      }
+    },
+    "/api/team/": {
+      "get": {
+        "tags": [
+          "Team"
+        ],
+        "summary": "List Team",
+        "description": "  List all teams!</br></br>  <b>Permission= No Permission</b></br>    - No admin users can't list emails of the team members</br></br>   You can send query with endpoint for filter[],search[], sort[], page and limit.  <ul> Examples:   <li>URL/?<b>filter[field1]=value1&filter[field2]=value2</b></li>   <li>URL/?<b>search[field1]=value1&search[field2]=value2</b></li>   <li>URL/?<b>sort[field1]=asc&sort[field2]=desc</b></li>   <li>URL/?<b>page=2&limit=1</b></li>  </ul>  ",
+        "parameters": [
+          {
+            "name": "filter",
+            "in": "query",
+            "description": "url?filter[fieldName]=value",
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "url?search[fieldName]=value",
+            "type": "string"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "url?sort[fieldName]=desc(or asc)",
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "url?page=1",
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "url?limit=20",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Listed!",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Teams are listed!"
+                },
+                "data": {
+                  "$ref": "#/definitions/Team"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Team"
+        ],
+        "summary": "Create new Team member",
+        "description": "  Create a new team member!</br></br>  <b>Permission= Admin User</b></br></br>   - fullName length max:40</br>  - description length max:300</br>   - image max: 5 mb - required</br>   - order field is number, 1,2,3,4 -> for manual order, user can select the order</br>   - email length max:100</br>   - Email type Rules- --@--.--</br>  - Required fields: - fullName, description, email, order and fileUploading(imageFile)</br>    ",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "name": "imageFile",
+            "in": "formData",
+            "type": "file",
+            "required": true,
+            "description": "max 5mb"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "fullName": {
+                  "type": "string",
+                  "example": "test team"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "email@example.com"
+                },
+                "description": {
+                  "type": "string",
+                  "example": "desc"
+                },
+                "order": {
+                  "type": "number",
+                  "example": 1
+                }
+              },
+              "required": [
+                "fullName",
+                "email",
+                "description",
+                "order"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successfully  !",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "A new team member is created!"
+                },
+                "data": {
+                  "$ref": "#/definitions/Team"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request </br>  - fullName, description, email fields are required!</br>   - Length errors</br>  "
+          }
+        }
+      }
+    },
+    "/api/team/{id}": {
+      "get": {
+        "tags": [
+          "Team"
+        ],
+        "summary": "Get a team member",
+        "description": "  Get a team member by id!!</br></br>  <b>Permission= No Permission</b></br>    - No admin users can't list emails and userIds of the team members</br></br>   ",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully found!",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Team member is found!"
+                },
+                "data": {
+                  "$ref": "#/definitions/Team"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid teamId (paramId) type(ObjectId)!"
+          },
+          "404": {
+            "description": "Not found - Team member not found!"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Team"
+        ],
+        "summary": "Update a Team",
+        "description": "  Update a Team by id!</br></br>  <b>Permission= Admin user</b></br>   - fullName length max:40</br>  - description length max:300</br>   - image max: 5mb - not required</br>   - order field is number, 1,2,3,4 -> for manual order, user can select the order</br>   - email length max:100</br>   - Email type Rules- --@--.--</br>  - Required fields: - fullName, description, email</br>    ",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "imageFile",
+            "in": "formData",
+            "type": "file",
+            "required": false,
+            "description": "max 5mb - not required"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "fullName": {
+                  "type": "string",
+                  "example": "test team"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "email@example.com"
+                },
+                "description": {
+                  "type": "string",
+                  "example": "desc"
+                },
+                "order": {
+                  "type": "number",
+                  "example": 2
+                }
+              },
+              "required": [
+                "fullName",
+                "email",
+                "description",
+                "order"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Successfully  !",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Team member is  !!"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "modifiedCount": {
+                      "type": "number",
+                      "example": 1
+                    }
+                  }
+                },
+                "new": {
+                  "$ref": "#/definitions/Team"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request    </br>- Invalid teamId(paramId) type(ObjectId)!  - fullName, description, image, email fields are required!</br>   - Length errors</br>   "
+          },
+          "404": {
+            "description": "Not found </br>  - Team member not found for update!</br>   "
+          },
+          "500": {
+            "description": "Something went wrong! - asked record is found, but it couldn't be updated!"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Team"
+        ],
+        "summary": "Delete a team member",
+        "description": "  Delete a team member by id!!</br></br>  <b>Permission= Admin user</b></br>   ",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successfully  !"
+          },
+          "400": {
+            "description": "Bad request - Invalid teamId(paramId) type(ObjectId)!"
+          },
+          "404": {
+            "description": "Not found - Team member not found for delete!"
+          },
+          "500": {
+            "description": "Something went wrong! - asked record is found, but it couldn't be updated!"
+          }
+        }
+      }
+    },
+    "/api/training/": {
+      "get": {
+        "tags": [
+          "Training"
+        ],
+        "summary": "List Trainings",
+        "description": "  List all trainings!</br></br>  <b>Permission= No Permission</b></br> </br>   You can send query with endpoint for filter[],search[], sort[], page and limit.  <ul> Examples:   <li>URL/?<b>filter[field1]=value1&filter[field2]=value2</b></li>   <li>URL/?<b>search[field1]=value1&search[field2]=value2</b></li>   <li>URL/?<b>sort[field1]=asc&sort[field2]=desc</b></li>   <li>URL/?<b>page=2&limit=1</b></li>  </ul>  ",
+        "parameters": [
+          {
+            "name": "filter",
+            "in": "query",
+            "description": "url?filter[fieldName]=value",
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "url?search[fieldName]=value",
+            "type": "string"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "url?sort[fieldName]=desc(or asc)",
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "url?page=1",
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "url?limit=20",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Listed!",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Trainings are listed!"
+                },
+                "data": {
+                  "$ref": "#/definitions/Training"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Training"
+        ],
+        "summary": "Create new Training",
+        "description": "  Create a new training!</br></br>  <b>Permission= Admin User</b></br></br>   - title length max:40</br>  - description length max:300</br>   - order field is number, 1,2,3,4 -> for manual order, user can select the order</br>   - time field string, max length: 25</br>   - points -> array of string, each string maxlength: 30</br>   - Required fields: - title, description, order, time, points</br>    ",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "example": "test training"
+                },
+                "description": {
+                  "type": "string",
+                  "example": "desc"
+                },
+                "order": {
+                  "type": "number",
+                  "example": 1
+                },
+                "time": {
+                  "type": "string",
+                  "example": "48 saat"
+                },
+                "points": {
+                  "type": "array",
+                  "example": [
+                    "point 1",
+                    "point 2"
+                  ],
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "title",
+                "description",
+                "order",
+                "time",
+                "points"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successfully  !",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "A new training is created!"
+                },
+                "data": {
+                  "$ref": "#/definitions/Training"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request </br>  - title, description, order, time, points fields are required!</br>   - Length errors</br>  "
+          }
+        }
+      }
+    },
+    "/api/training/{id}": {
+      "get": {
+        "tags": [
+          "Training"
+        ],
+        "summary": "Get a training",
+        "description": "  Get a training by id!!</br></br>  <b>Permission= No Permission</b></br>   </br>   ",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully found!",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Training is found!"
+                },
+                "data": {
+                  "$ref": "#/definitions/Training"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid trainingId (paramId) type(ObjectId)!"
+          },
+          "404": {
+            "description": "Not found - Training not found!"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Training"
+        ],
+        "summary": "Update a Training",
+        "description": "  Update a Training by id!</br></br>  <b>Permission= Admin user</b></br>   - title length max:40</br>  - description length max:300</br>   - order field is number, 1,2,3,4 -> for manual order, user can select the order</br>   - time field string, max length: 25</br>   - points -> array of string, each string maxlength: 30</br>   - Required fields: - title, description, order, time, points </br>    ",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "example": "test training"
+                },
+                "description": {
+                  "type": "string",
+                  "example": "desc"
+                },
+                "order": {
+                  "type": "number",
+                  "example": 1
+                },
+                "time": {
+                  "type": "string",
+                  "example": "48 saat"
+                },
+                "points": {
+                  "type": "array",
+                  "example": [
+                    "point 1",
+                    "point-2"
+                  ],
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "title",
+                "description",
+                "order",
+                "time",
+                "points"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Successfully  !",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Training is  !!"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "modifiedCount": {
+                      "type": "number",
+                      "example": 1
+                    }
+                  }
+                },
+                "new": {
+                  "$ref": "#/definitions/Training"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request    </br>- Invalid trainingId(paramId) type(ObjectId)!  - title, description, order, time, points fields are required!</br>   - Length errors</br>   "
+          },
+          "404": {
+            "description": "Not found </br>  - Training not found for update!</br>   "
+          },
+          "500": {
+            "description": "Something went wrong! - asked record is found, but it couldn't be updated!"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Training"
+        ],
+        "summary": "Delete a training",
+        "description": "  Delete a training by id!!</br></br>  <b>Permission= Admin user</b></br>   ",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successfully  !"
+          },
+          "400": {
+            "description": "Bad request - Invalid trainingId(paramId) type(ObjectId)!"
+          },
+          "404": {
+            "description": "Not found - Training not found for delete!"
+          },
+          "500": {
+            "description": "Something went wrong! - asked record is found, but it couldn't be updated!"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "trim": {
+              "type": "boolean",
+              "example": true
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            },
+            "unique": {
+              "type": "boolean",
+              "example": true
+            },
+            "index": {
+              "type": "boolean",
+              "example": true
+            },
+            "maxlength": {
+              "type": "number",
+              "example": 40
+            }
+          }
+        },
+        "password": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "trim": {
+              "type": "boolean",
+              "example": true
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            },
+            "set": {
+              "type": "function"
+            },
+            "validate": {
+              "type": "array",
+              "example": [
+                null,
+                "Invalid password type Rules- [lenght:8-16, at least: 1 upper, 1 lower, 1 number, 1 special[@$!%*?&]]"
+              ],
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "fullName": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "trim": {
+              "type": "boolean",
+              "example": true
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            },
+            "maxlength": {
+              "type": "number",
+              "example": 40
+            }
+          }
+        },
+        "email": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "trim": {
+              "type": "boolean",
+              "example": true
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            },
+            "unique": {
+              "type": "boolean",
+              "example": true
+            },
+            "index": {
+              "type": "boolean",
+              "example": true
+            },
+            "validate": {
+              "type": "array",
+              "example": [
+                null,
+                "Invalid email type, type: __@__.__"
+              ],
+              "items": {
+                "type": "string"
+              }
+            },
+            "maxlength": {
+              "type": "number",
+              "example": 100
+            }
+          }
+        },
+        "isAdmin": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "default": {
+              "type": "boolean",
+              "example": false
+            }
+          }
+        }
+      }
+    },
+    "Email": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            },
+            "trim": {
+              "type": "boolean",
+              "example": true
+            },
+            "maxlength": {
+              "type": "number",
+              "example": 100
+            },
+            "validate": {
+              "type": "array",
+              "example": [
+                null,
+                "Invalid email type, type: __@__.__"
+              ],
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "Team": {
+      "type": "object",
+      "properties": {
+        "fullName": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "trim": {
+              "type": "boolean",
+              "example": true
+            },
+            "unique": {
+              "type": "boolean",
+              "example": true
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            },
+            "maxlength": {
+              "type": "number",
+              "example": 40
+            }
+          }
+        },
+        "description": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "trim": {
+              "type": "boolean",
+              "example": true
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            },
+            "maxlength": {
+              "type": "number",
+              "example": 300
+            }
+          }
+        },
+        "image": {
+          "type": "object",
+          "properties": {
+            "public_id": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "function"
+                },
+                "required": {
+                  "type": "boolean",
+                  "example": true
+                }
+              }
+            },
+            "url": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "function"
+                },
+                "required": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "validate": {
+                  "type": "function"
+                }
+              }
+            }
+          }
+        },
+        "email": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            },
+            "trim": {
+              "type": "boolean",
+              "example": true
+            },
+            "unique": {
+              "type": "boolean",
+              "example": true
+            },
+            "maxlength": {
+              "type": "number",
+              "example": 100
+            },
+            "validate": {
+              "type": "array",
+              "example": [
+                null,
+                "Invalid email type, type: __@__.__"
+              ],
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "order": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            }
+          }
+        }
+      }
+    },
+    "Training": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "trim": {
+              "type": "boolean",
+              "example": true
+            },
+            "unique": {
+              "type": "boolean",
+              "example": true
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            },
+            "maxlength": {
+              "type": "number",
+              "example": 40
+            }
+          }
+        },
+        "description": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "trim": {
+              "type": "boolean",
+              "example": true
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            },
+            "maxlength": {
+              "type": "number",
+              "example": 300
+            }
+          }
+        },
+        "order": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            }
+          }
+        },
+        "time": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "trim": {
+              "type": "boolean",
+              "example": true
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            },
+            "maxlength": {
+              "type": "number",
+              "example": 25
+            }
+          }
+        },
+        "points": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "function"
+              },
+              "required": {
+                "type": "boolean",
+                "example": true
+              },
+              "trim": {
+                "type": "boolean",
+                "example": true
+              },
+              "maxLength": {
+                "type": "number",
+                "example": 30
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "Token": []
+    },
+    {
+      "Bearer": []
+    }
+  ]
+}
