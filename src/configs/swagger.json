@@ -13,7 +13,7 @@
       "email": "ibr.seckin@gmail.com"
     }
   },
-  "host": "localhost:10000",
+  "host": "ewh-educ-backend.vercel.app",
   "basePath": "/",
   "schemes": [
     "https",
@@ -1383,7 +1383,7 @@
           "Training"
         ],
         "summary": "Create new Training",
-        "description": "  Create a new training!</br></br>  <b>Permission= Admin User</b></br></br>   - title length max:40</br>  - description length max:300</br>   - order field is number, 1,2,3,4 -> for manual order, user can select the order</br>   - time field string, max length: 25</br>   - points -> array of string, each string maxlength: 30</br>   - Required fields: - title, description, order, time, points</br>    ",
+        "description": "  Create a new training!</br></br>  <b>Permission= Admin User</b></br></br>   - title length max:40</br>  - description length max:300</br>   - order field is number, 1,2,3,4 -> for manual order, user can select the order</br>   - time field string, max length: 25</br>   - points -> array of string, each string maxlength: 100</br>   - Required fields: - title, description, order, time, points</br>    ",
         "consumes": [
           "application/json"
         ],
@@ -1512,7 +1512,7 @@
           "Training"
         ],
         "summary": "Update a Training",
-        "description": "  Update a Training by id!</br></br>  <b>Permission= Admin user</b></br>   - title length max:40</br>  - description length max:300</br>   - order field is number, 1,2,3,4 -> for manual order, user can select the order</br>   - time field string, max length: 25</br>   - points -> array of string, each string maxlength: 30</br>   - Required fields: - title, description, order, time, points </br>    ",
+        "description": "  Update a Training by id!</br></br>  <b>Permission= Admin user</b></br>   - title length max:40</br>  - description length max:300</br>   - order field is number, 1,2,3,4 -> for manual order, user can select the order</br>   - time field string, max length: 25</br>   - points -> array of string, each string maxlength: 100</br>   - Required fields: - title, description, order, time, points </br>    ",
         "consumes": [
           "application/json"
         ],
@@ -2033,7 +2033,7 @@
               },
               "maxLength": {
                 "type": "number",
-                "example": 30
+                "example": 100
               }
             }
           }
