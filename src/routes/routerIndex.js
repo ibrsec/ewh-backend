@@ -22,6 +22,7 @@ router.use('/auth',require('./authRouter'));
 router.use('/emails',require('./emailRouter'));
 router.use('/team',require('./teamRouter'));
 router.use('/training',require('./trainingRouter'));
+router.use('/blogs',require('./blogRouter'));
 // router.use('/files',require('./fileRouter'));
 // router.use('/flights',require('./flightRouter'));
 // router.use('/destinations',require('./destinationRouter'));

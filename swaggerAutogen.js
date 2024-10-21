@@ -43,6 +43,7 @@ const document = {
     Email: require("./src/models/emailModel").Email.schema.obj,
     Team: require("./src/models/teamModel").Team.schema.obj,
     Training: require("./src/models/trainingModel").Training.schema.obj,
+    Blog: require("./src/models/blogModel").Blog.schema.obj,
   },
 };
 
