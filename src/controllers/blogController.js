@@ -152,9 +152,9 @@ module.exports.blog = {
     // Kullanıcının gönderdiği içeriği temizleme
     const cleanSantizeContent = sanitizeContent(content);
 
-    const safeContent = escapeHtml(cleanSantizeContent);
+    // const safeContent = escapeHtml(cleanSantizeContent);
 
-    req.body.content = safeContent.trim();
+    req.body.content = cleanSantizeContent.trim();
 
 
 
@@ -350,9 +350,9 @@ module.exports.blog = {
       // Kullanıcının gönderdiği içeriği temizleme
       const cleanSantizeContent = sanitizeContent(content);
 
-      const safeContent = escapeHtml(cleanSantizeContent);
+      // const safeContent = escapeHtml(cleanSantizeContent);
   
-      req.body.content = safeContent.trim();
+      req.body.content = cleanSantizeContent.trim();
 
 
       lengthValidationOr400(title, "title", 1, 150);
