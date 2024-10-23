@@ -20,6 +20,9 @@ router.route('/:id')
 router.post('/subscription',email.subscribe);
 router.get('/subscription/:id',email.deleteSubscribe);
 
+router.route('/everyone') 
+.post(permissons.isAdmin,email.sendAllMail);
+
 /* -------------------------------------------------------------------------- */
 module.exports = router;
 

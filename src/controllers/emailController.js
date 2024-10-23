@@ -2,6 +2,7 @@
 
 const CustomError = require("../errors/customError");
 const emailValidation = require("../helpers/emailValidation");
+const sanitizeContent = require("../helpers/sanitizeContent");
 const sendMail = require("../helpers/sendMail");
 const {
   idTypeValidationOr400,
@@ -46,7 +47,7 @@ module.exports.email = {
 
 
         */
-    const emails = await res.getModelList(Email, {}, "categoryId");
+    const emails = await res.getModelList(Email);
     res.json({
       error: false,
       message: `Emails are listed!`,
@@ -474,5 +475,58 @@ module.exports.email = {
     res.send(`
       <p style="padding: 30px; text-align: center; color:purple; font-weight:500; font-size:24px;">Aboneliğiniz başarıyla kaldırılmıştır! Teşekkür ederiz, en iyi dileklerimizle!      </p>
     `);
+  },
+
+  sendAllMail: async (req, res) => {
+    /*
+            #swagger.ignore = true
+
+        */
+
+    // * Checks if a requirement is mandatory based on the provided name in the request body.
+    mustRequirementOr400({
+      content: req.body.content,
+    });
+
+    // Kullanıcının gönderdiği içeriği temizleme
+    const cleanSantizeContent = sanitizeContent(req.body.content);
+
+    req.body.content = cleanSantizeContent.trim();
+
+    const allEmailsData = await Email.find();
+
+    sendMail(
+      allEmailsData.map((email) => email.email).join(","),
+      "English with Hatice!",
+      `
+      <div style="max-width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); overflow: hidden;">
+      <div style="background-color: #2d1f55; color: #ffffff; padding: 20px; text-align: center;">
+          <h1 style="margin: 0; font-size: 24px;">English with Hatice</h1>
+      </div>
+      <div style="padding: 30px;">
+      
+      ${req.body.content}
+      </div>
+      <div className="">
+        <div style="padding: 30px; text-align: center;">  
+            <a href="${process.env.WEBSITE}" style="display: inline-block; margin-top: 20px; padding: 10px 20px; background-color: #2d1f55; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold;">Sitemizi ziyaret edin</a>
+        </div>
+        <div style="background-color: #f4f4f4; padding: 20px; text-align: center; font-size: 12px; color: #777777;">
+            <p style="margin: 0;">Herhangi bir sorunuz veya geri bildiriminiz varsa, bizimle iletişime geçmekten çekinmeyin. Sizin görüşleriniz bizim için çok değerli!</p>
+            <p style="margin: 0;">Aboneliğinizi iptal etmek için bizimle iletişime geçebilirsiniz:</p>
+            <a href="${process.env.WEBSITE}/contact" style="display: inline-block; margin-top: 20px; padding: 10px 20px; background-color: #2d1f55; 
+            color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold;"> İletişim</a> 
+            <p style="margin: 0; margin-top: 10px; font-size:30px;">English with Hatice</p>
+        </div>
+      </div>
+      
+  </div>
+      `
+    );
+
+    res.status(200).json({
+      error: false,
+      message: `Mailiniz Email Listesindeki herkese gönderildi!`,
+    });
   },
 };
