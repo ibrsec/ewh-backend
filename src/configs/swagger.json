@@ -1639,6 +1639,555 @@
           }
         }
       }
+    },
+    "/api/blogs/": {
+      "get": {
+        "tags": [
+          "Blog"
+        ],
+        "summary": "List Blogs",
+        "description": "  List all blogs!</br></br>  <b>Permission= No Permission</b></br> </br>   You can send query with endpoint for filter[],search[], sort[], page and limit.  <ul> Examples:   <li>URL/?<b>filter[field1]=value1&filter[field2]=value2</b></li>   <li>URL/?<b>search[field1]=value1&search[field2]=value2</b></li>   <li>URL/?<b>sort[field1]=asc&sort[field2]=desc</b></li>   <li>URL/?<b>page=2&limit=1</b></li>  </ul>  ",
+        "parameters": [
+          {
+            "name": "filter",
+            "in": "query",
+            "description": "url?filter[fieldName]=value",
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "url?search[fieldName]=value",
+            "type": "string"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "url?sort[fieldName]=desc(or asc)",
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "url?page=1",
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "url?limit=20",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Listed!",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Blogs are listed!"
+                },
+                "data": {
+                  "$ref": "#/definitions/Blog"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Blog"
+        ],
+        "summary": "Create new Blog",
+        "description": "  Create a new blog!</br></br>  <b>Permission= Admin User</b></br></br>   - title length max:150</br>  - shortDescription length max:350</br>   - author length max:100</br>   - image max: 5 mb - required</br>   - order field is number, 1,2,3,4 -> for manual order, user can select the order</br>   - content field is html(string)</br>   - Required fields: - title, shortDescription, author, order, content and fileUploading(imageFile)</br>    ",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "name": "imageFile",
+            "in": "formData",
+            "type": "file",
+            "required": true,
+            "description": "max 5mb"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "example": "test blog title"
+                },
+                "shortDescription": {
+                  "type": "string",
+                  "example": "...shortDescription..."
+                },
+                "author": {
+                  "type": "string",
+                  "example": "blog author"
+                },
+                "content": {
+                  "type": "string",
+                  "example": " html content"
+                },
+                "order": {
+                  "type": "number",
+                  "example": 1
+                }
+              },
+              "required": [
+                "title",
+                "shortDescription",
+                "author",
+                "content",
+                "order"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successfully  !",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "A new blog is created!"
+                },
+                "data": {
+                  "$ref": "#/definitions/Blog"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request </br>  - title, author, order, content fields are required!</br>   - Length errors</br>  "
+          }
+        }
+      }
+    },
+    "/api/blogs/{id}": {
+      "get": {
+        "tags": [
+          "Blog"
+        ],
+        "summary": "Get a blog",
+        "description": "  Get a blog member by id!!</br></br>  <b>Permission= No Permission</b></br> </br>   ",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully found!",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Blog is found!"
+                },
+                "data": {
+                  "$ref": "#/definitions/Blog"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid blogId (paramId) type(ObjectId)!"
+          },
+          "404": {
+            "description": "Not found - Blog not found!"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Blog"
+        ],
+        "summary": "Update a Blog",
+        "description": "  Update a Blog by id!</br></br>  <b>Permission= Admin user</b></br>   - title length max:150</br>  - shortDescription length max:350</br>   - author length max:100</br>   - image max: 5 mb - not required</br>   - order field is number, 1,2,3,4 -> for manual order, user can select the order</br>   - content field is html(string)</br>   - Required fields: - title, shortDescription, author, order, content</br>    ",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "imageFile",
+            "in": "formData",
+            "type": "file",
+            "required": false,
+            "description": "max 5mb - not required"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "example": "test blog title"
+                },
+                "shortDescription": {
+                  "type": "string",
+                  "example": "...shortDescription..."
+                },
+                "author": {
+                  "type": "string",
+                  "example": "blog author"
+                },
+                "content": {
+                  "type": "string",
+                  "example": " html content"
+                },
+                "order": {
+                  "type": "number",
+                  "example": 1
+                }
+              },
+              "required": [
+                "title",
+                "shortDescription",
+                "author",
+                "content",
+                "order"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Successfully  !",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Blog is  !!"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "modifiedCount": {
+                      "type": "number",
+                      "example": 1
+                    }
+                  }
+                },
+                "new": {
+                  "$ref": "#/definitions/Blog"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request    </br>- Invalid blogId(paramId) type(ObjectId)!  - title, shortDescription, author, order, content fields are required!</br>   - Length errors</br>   "
+          },
+          "404": {
+            "description": "Not found </br>  - Blog not found for update!</br>   "
+          },
+          "500": {
+            "description": "Something went wrong! - asked record is found, but it couldn't be updated!"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Blog"
+        ],
+        "summary": "Delete a blog",
+        "description": "  Delete a blog by id!!</br></br>  <b>Permission= Admin user</b></br>   ",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successfully  !"
+          },
+          "400": {
+            "description": "Bad request - Invalid blogId(paramId) type(ObjectId)!"
+          },
+          "404": {
+            "description": "Not found - Blog not found for delete!"
+          },
+          "500": {
+            "description": "Something went wrong! - asked record is found, but it couldn't be updated!"
+          }
+        }
+      }
+    },
+    "/api/contactInfo/": {
+      "get": {
+        "tags": [
+          "ContactInfo"
+        ],
+        "summary": "List ContactInfos",
+        "description": "  List all contactInfos!</br></br>  <b>Permission= Admin User</b></br> </br>   You can send query with endpoint for filter[],search[], sort[], page and limit.  <ul> Examples:   <li>URL/?<b>filter[field1]=value1&filter[field2]=value2</b></li>   <li>URL/?<b>search[field1]=value1&search[field2]=value2</b></li>   <li>URL/?<b>sort[field1]=asc&sort[field2]=desc</b></li>   <li>URL/?<b>page=2&limit=1</b></li>  </ul>  ",
+        "parameters": [
+          {
+            "name": "filter",
+            "in": "query",
+            "description": "url?filter[fieldName]=value",
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "url?search[fieldName]=value",
+            "type": "string"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "url?sort[fieldName]=desc(or asc)",
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "url?page=1",
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "url?limit=20",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully Listed!",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "ContactInfos are listed!"
+                },
+                "data": {
+                  "$ref": "#/definitions/ContactInfo"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "ContactInfo"
+        ],
+        "summary": "Create new ContactInfo",
+        "description": "  Create a new contactInfo!</br></br>  <b>Permission= No Permisson</b></br></br>   - fullName length max:100</br>  - phone length max:100</br>   - message field max length: 1500</br>   - email length max:100</br>   - email type: email@example.com</br>    - Required fields: - fullName, phone, message, email</br>    ",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "createdAt": {
+                  "example": "any"
+                },
+                "updatedAt": {
+                  "example": "any"
+                },
+                "status": {
+                  "example": "any"
+                },
+                "in": {
+                  "example": "any"
+                },
+                "required": {
+                  "example": "any"
+                },
+                "schema": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successfully created!",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Mesajiniz gonderildi!"
+                },
+                "data": {
+                  "$ref": "#/definitions/ContactInfo"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request </br>  - fullName, phone, message, email fields are required!</br>   - Length errors</br>  "
+          }
+        }
+      }
+    },
+    "/api/contactInfo/{id}": {
+      "delete": {
+        "tags": [
+          "ContactInfo"
+        ],
+        "summary": "Delete a contactInfo",
+        "description": "  Delete a contactInfo by id!!</br></br>  <b>Permission= Admin user</b></br>   ",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successfully  !"
+          },
+          "400": {
+            "description": "Bad request - Invalid contactInfoId(paramId) type(ObjectId)!"
+          },
+          "404": {
+            "description": "Not found - ContactInfo not found for delete!"
+          },
+          "500": {
+            "description": "Something went wrong! - asked record is found, but it couldn't be updated!"
+          }
+        }
+      }
+    },
+    "/api/contactInfo/read/{id}": {
+      "put": {
+        "tags": [
+          "ContactInfos"
+        ],
+        "summary": "Change status with 'okundu'",
+        "description": "   Change status with 'okundu' a ContactInfo by id!</br></br>   <b>Permission= Admin user</b></br>  ",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Successfully partially updated!",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "message": {
+                  "type": "string",
+                  "example": "ContactInfo is partially updated!!"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "modifiedCount": {
+                      "type": "number",
+                      "example": 1
+                    }
+                  }
+                },
+                "new": {
+                  "$ref": "#/definitions/ContactInfo"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request   </br>- Invalid contactInfoId(paramId) type(ObjectId)!    "
+          },
+          "404": {
+            "description": "Not found - ContactInfo not found for partial update!"
+          },
+          "500": {
+            "description": "Something went wrong! - asked record is found, but it couldn't be updated!"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -2035,6 +2584,248 @@
                 "type": "number",
                 "example": 100
               }
+            }
+          }
+        }
+      }
+    },
+    "Blog": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "trim": {
+              "type": "boolean",
+              "example": true
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            },
+            "maxlength": {
+              "type": "number",
+              "example": 150
+            }
+          }
+        },
+        "author": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "trim": {
+              "type": "boolean",
+              "example": true
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            },
+            "maxlength": {
+              "type": "number",
+              "example": 100
+            }
+          }
+        },
+        "image": {
+          "type": "object",
+          "properties": {
+            "public_id": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "function"
+                },
+                "required": {
+                  "type": "boolean",
+                  "example": true
+                }
+              }
+            },
+            "url": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "function"
+                },
+                "required": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "validate": {
+                  "type": "function"
+                }
+              }
+            }
+          }
+        },
+        "order": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            }
+          }
+        },
+        "content": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "trim": {
+              "type": "boolean",
+              "example": true
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            }
+          }
+        },
+        "shortDescription": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "trim": {
+              "type": "boolean",
+              "example": true
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            },
+            "maxlength": {
+              "type": "number",
+              "example": 350
+            }
+          }
+        }
+      }
+    },
+    "ContactInfo": {
+      "type": "object",
+      "properties": {
+        "fullName": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            },
+            "trim": {
+              "type": "boolean",
+              "example": true
+            },
+            "maxlength": {
+              "type": "number",
+              "example": 100
+            }
+          }
+        },
+        "email": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            },
+            "trim": {
+              "type": "boolean",
+              "example": true
+            },
+            "maxlength": {
+              "type": "number",
+              "example": 100
+            },
+            "validate": {
+              "type": "array",
+              "example": [
+                null,
+                "Invalid email type, type: __@__.__"
+              ],
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "phone": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            },
+            "trim": {
+              "type": "boolean",
+              "example": true
+            },
+            "maxlength": {
+              "type": "number",
+              "example": 100
+            }
+          }
+        },
+        "message": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "required": {
+              "type": "boolean",
+              "example": true
+            },
+            "trim": {
+              "type": "boolean",
+              "example": true
+            },
+            "maxlength": {
+              "type": "number",
+              "example": 1500
+            }
+          }
+        },
+        "status": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "function"
+            },
+            "enum": {
+              "type": "array",
+              "example": [
+                "yeni",
+                "okundu"
+              ],
+              "items": {
+                "type": "string"
+              }
+            },
+            "default": {
+              "type": "string",
+              "example": "yeni"
             }
           }
         }

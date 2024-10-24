@@ -44,6 +44,7 @@ const document = {
     Team: require("./src/models/teamModel").Team.schema.obj,
     Training: require("./src/models/trainingModel").Training.schema.obj,
     Blog: require("./src/models/blogModel").Blog.schema.obj,
+    ContactInfo: require("./src/models/contactInfoModel").ContactInfo.schema.obj,
   },
 };
 
